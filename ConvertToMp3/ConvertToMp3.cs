@@ -1,12 +1,16 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ConvertToMp3
 {
     public partial class FormConvertToMp3 : Form
     {
-        private const string FileSearchPattern = "*.*";
+        private Converter _converter;
+
+        private const string FileSearchPattern = "*.flac";
 
         public FormConvertToMp3()
         {
@@ -44,6 +48,21 @@ namespace ConvertToMp3
         private void buttonStart_Click(object sender, EventArgs e)
         {
             SetStateBusy();
+
+            var sourceFilePaths = listBox.Items.Cast<string>().ToList();
+
+            _converter = new Converter();
+
+            timer.Interval = 500;
+            timer.Start();
+
+            Task.Run(() =>
+            {
+                
+                _converter.ConvertFiles(sourceFilePaths, checkBoxDeleteOriginals.Checked);
+            })
+            .ContinueWith(task => timer.Stop(), TaskScheduler.FromCurrentSynchronizationContext())
+            .ContinueWith(task => SetStateIdle(), TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         private void listBox_DragDrop(object sender, DragEventArgs e)
@@ -75,7 +94,15 @@ namespace ConvertToMp3
 
         private void timer_Tick(object sender, EventArgs e)
         {
+            if (_converter.State != null)
+            {
+                labelMessage.Text = _converter.State;
+            }
 
+            SetProgressLabel(_converter.ProcessedSourceFiles, _converter.TotalSourceFiles);
+
+            progressBar.Maximum = _converter.TotalSourceFiles;
+            progressBar.Value = _converter.ProcessedSourceFiles;
         }
 
         private void SetButtonState()
@@ -83,6 +110,11 @@ namespace ConvertToMp3
             var listBoxHasItems = listBox.Items.Count > 0;
             buttonStart.Enabled = listBoxHasItems;
             buttonClear.Enabled = listBoxHasItems;
+        }
+
+        private void SetProgressLabel(int processedSourceFiles, int totalSourceFiles)
+        {
+            labelProgress.Text = $@"{processedSourceFiles}/{totalSourceFiles}";
         }
 
         private void SetStateBusy()
@@ -102,9 +134,10 @@ namespace ConvertToMp3
             buttonStart.Enabled = false;
             checkBoxDeleteOriginals.Enabled = true;
             labelMessage.Text = @"Drop files here";
-            labelProgress.Text = @"0/0";
             listBox.Enabled = true;
             listBox.Items.Clear();
+            progressBar.Value = 0;
+            SetProgressLabel(0, 0);
             timer.Enabled = false;
         }
     }
