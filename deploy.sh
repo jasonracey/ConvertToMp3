@@ -1,0 +1,2 @@
+/c/Windows/Microsoft.NET/Framework/v4.0.30319/MSBuild.exe ./ConvertToMp3.sln /property:Configuration=Release
+find ./ConvertToMp3/bin/Release -name '*.exe' -o -name '*.config' -o -name '*.dll' | xargs cp -v -t /y/Files/Software/Tools/ConvertToMp3/
