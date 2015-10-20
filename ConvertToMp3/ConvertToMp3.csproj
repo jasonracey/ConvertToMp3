@@ -53,6 +53,7 @@
     <Compile Include="ConvertToMp3.Designer.cs">
       <DependentUpon>ConvertToMp3.cs</DependentUpon>
     </Compile>
+    <Compile Include="FileFinder.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="ConvertToMp3.resx">

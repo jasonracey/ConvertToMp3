@@ -10,8 +10,6 @@ namespace ConvertToMp3
     {
         private Converter _converter;
 
-        private const string FileSearchPattern = "*.flac";
-
         public FormConvertToMp3()
         {
             InitializeComponent();
@@ -30,8 +28,7 @@ namespace ConvertToMp3
                 var selectedPath = folderBrowserDialog.SelectedPath;
                 if (Directory.Exists(selectedPath))
                 {
-                    var files = Directory.GetFiles(selectedPath, FileSearchPattern, SearchOption.AllDirectories);
-                    foreach (var file in files)
+                    foreach (var file in FileFinder.GetSupportedFiles(selectedPath))
                     {
                         listBox.Items.Add(file);
                     }
@@ -67,18 +64,18 @@ namespace ConvertToMp3
 
         private void listBox_DragDrop(object sender, DragEventArgs e)
         {
-            foreach (var item in (string[])e.Data.GetData(DataFormats.FileDrop))
+            foreach (var path in (string[])e.Data.GetData(DataFormats.FileDrop))
             {
-                if (Directory.Exists(item))
+                if (Directory.Exists(path))
                 {
-                    foreach (var file in Directory.GetFiles(item, FileSearchPattern, SearchOption.AllDirectories))
+                    foreach (var file in FileFinder.GetSupportedFiles(path))
                     {
                         listBox.Items.Add(file);
                     }
                 }
-                else if (File.Exists(item))
+                else if (File.Exists(path))
                 {
-                    listBox.Items.Add(item);
+                    listBox.Items.Add(path);
                 }
             }
             SetButtonState();
