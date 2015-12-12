@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 
@@ -25,7 +26,8 @@ namespace ConvertToMp3
         private void ConvertFile(string sourceFilePath, bool deleteSourceFile)
         {
             var sourceFileInfo = new FileInfo(sourceFilePath);
-            var destFilePath = sourceFilePath.Replace(sourceFileInfo.Extension, ".mp3");
+            var destFileName = sourceFileInfo.Name.Replace(sourceFileInfo.Extension, ".mp3");
+            var destFilePath = $"{sourceFileInfo.DirectoryName}\\{destFileName}";
 
             if (File.Exists(destFilePath))
             {
@@ -34,19 +36,27 @@ namespace ConvertToMp3
 
             var processStartInfo = new ProcessStartInfo
             {
+                Arguments = $"-i \"{sourceFilePath}\" -ab 320k \"{destFilePath}\"",
                 CreateNoWindow = true,
+                FileName = @"C:\Program Files\ffmpeg-20151211-git-df2ce13-win64-static\bin\ffmpeg.exe",
+                RedirectStandardError = true,
                 UseShellExecute = false,
-                FileName = @"C:\Program Files\ffmpeg-20150911-git-f58e011-win64-static\bin\ffmpeg.exe",
-                WindowStyle = ProcessWindowStyle.Hidden,
-                Arguments = $"-i \"{sourceFilePath}\" -ab 320k \"{destFilePath}\""
+                WindowStyle = ProcessWindowStyle.Hidden
             };
 
             State = $"Converting {sourceFileInfo.Name} ...";
-
+            
+            string standardError;
             using (var process = Process.Start(processStartInfo))
             {
+                standardError = process?.StandardError.ReadToEnd();
                 process?.WaitForExit();
             }
+
+            if (standardError != null && standardError.Contains("No such file or directory"))
+            {
+                throw new ApplicationException(standardError);
+            } 
 
             if (deleteSourceFile && File.Exists(destFilePath))
             {
