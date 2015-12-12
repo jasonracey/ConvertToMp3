@@ -55,7 +55,6 @@ namespace ConvertToMp3
 
             Task.Run(() =>
             {
-                
                 _converter.ConvertFiles(sourceFilePaths, checkBoxDeleteOriginals.Checked);
             })
             .ContinueWith(task => timer.Stop(), TaskScheduler.FromCurrentSynchronizationContext())
