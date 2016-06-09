@@ -7,7 +7,14 @@ namespace ConvertToMp3
 {
     public static class FileFinder
     {
-        private static readonly List<string> Extensions = new List<string> { ".ape", ".flac", ".m4a", ".mp4" };
+        private static readonly List<string> Extensions = new List<string>
+        {
+            ".ape",
+            ".flac",
+            ".m4a",
+            ".mp4",
+            ".wav"
+        };
 
         public static IEnumerable<string> GetSupportedFiles(string path)
         {
