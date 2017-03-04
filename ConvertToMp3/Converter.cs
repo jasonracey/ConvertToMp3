@@ -25,7 +25,9 @@ namespace ConvertToMp3
 
         private void ConvertFile(string sourceFilePath, bool deleteSourceFile)
         {
-            var sourceFileInfo = new FileInfo(sourceFilePath);
+            var fixedPath = sourceFilePath.Replace("", "/");
+            var sourceFileInfo = new FileInfo(fixedPath);
+
             var destFileName = sourceFileInfo.Name.Replace(sourceFileInfo.Extension, ".mp3");
             var destFilePath = $"{sourceFileInfo.DirectoryName}\\{destFileName}";
 
