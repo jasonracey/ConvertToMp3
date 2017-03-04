@@ -110,7 +110,8 @@ namespace ConvertToMp3
 
         private void SetProgressLabel(int processedSourceFiles, int totalSourceFiles)
         {
-            labelProgress.Text = $@"{processedSourceFiles}/{totalSourceFiles}";
+            var currentFileNumber = totalSourceFiles > 0 ? processedSourceFiles + 1 : 0;
+            labelProgress.Text = $@"processing {currentFileNumber}/{totalSourceFiles}";
         }
 
         private void SetStateBusy()
