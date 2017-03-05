@@ -127,7 +127,7 @@
             // folderBrowserDialog
             // 
             this.folderBrowserDialog.Description = "Select folder containing files to convert";
-            this.folderBrowserDialog.SelectedPath = "Y:\\Files\\Music";
+            this.folderBrowserDialog.SelectedPath = "Y:\\Files\\Music\\add";
             this.folderBrowserDialog.ShowNewFolderButton = false;
             // 
             // FormConvertToMp3
